@@ -37,27 +37,28 @@ Make scripture indestructible through distributed digital preservation. In an er
 
 ## 📦 What's Included
 
-- `bible.html` - Demo version with Genesis 1 (working prototype)
-- `bible-complete.html` - Full KJV Bible (after integration)
-- `landing.html` - Marketing page reference
-- `GET_BIBLE_DATA.md` - Instructions for getting full Bible data
-- `integrate-bible-data.js` - Script to embed Bible data
+- `scripture-complete.html` - Complete scripture reader (66 books KJV, 4.74 MB)
+- `scripture-data-complete.json` - Standalone data file (4.68 MB)
+- `fetch-all-scripture.js` - Download script for all scripture texts
+- `integrate-all-scripture.js` - Integration pipeline
+- `scripture-metadata.json` - Metadata for 100+ books
+- `SCRIPTURE_DATA_SPEC.md` - Complete data architecture
 - `.internal/` - Complete project documentation
 
-## 🛠️ Building the Complete Bible
+## 🛠️ Using the Scripture Library
 
-See `GET_BIBLE_DATA.md` for detailed instructions.
+**Already built and ready to use!**
 
-**Quick version:**
 ```bash
-# Download KJV data
-curl -o kjv-raw.json https://raw.githubusercontent.com/thiagobodruk/bible/master/json/en_kjv.json
+# View the complete scripture reader
+# Open scripture-complete.html in your browser
 
-# Integrate into HTML
-node integrate-bible-data.js
+# To add more texts (Deuterocanonical, Lost Books, etc.)
+node fetch-all-scripture.js  # Follow instructions
+node integrate-all-scripture.js  # Integrate new texts
 
 # Test offline
-# Open bible-complete.html and turn off WiFi
+# Open scripture-complete.html and turn off WiFi
 ```
 
 ## ✅ Quality Standards
@@ -112,10 +113,11 @@ Before distributing, run through these tests:
 
 ## 📊 Stats
 
-- **66 books** - Complete Old and New Testament
+- **66 books** - Complete Protestant Canon (KJV)
 - **1,189 chapters** - Every chapter included
-- **31,102 verses** - Complete KJV text
-- **~5 MB** - Total file size
+- **31,100 verses** - Complete KJV text
+- **4.74 MB** - Total file size (scripture-complete.html)
+- **100+ books** - Architecture supports Protestant, Deuterocanonical, Lost Books, Early Church
 - **0 dependencies** - Pure web standards
 - **0 tracking** - Complete privacy
 
