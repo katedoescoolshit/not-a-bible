@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Download the entire Bible as a static website. No internet. No permission. No expiration date.">
+    <title>The Offline Bible - They Can't Delete What You Already Have</title>
+    <style>
+:root {
+    --color-bg: #0a0a0a;
+    --color-surface: #1a1a1a;
+    --color-text: #ffffff;
+    --color-text-muted: #a0a0a0;
+    --color-primary: #ff3366;
+    --color-primary-hover: #ff5580;
+    --color-border: #333333;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 6rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(255, 51, 102, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #ff3366 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 0.8s ease-out 0.1s backwards;
+}
+
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.hero-subtitle strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.cta-group {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+    animation: fadeInUp 0.8s ease-out 0.3s backwards;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.btn-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(255, 51, 102, 0.6);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-large {
+    padding: 1.5rem 3rem;
+    font-size: 1.3rem;
+}
+
+.hero-meta {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+}
+
+.stats {
+    background: var(--color-surface);
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-md);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    line-height: 1;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.why {
+    padding: var(--space-xl) 0;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-md);
+}
+
+.why-card {
+    background: var(--color-surface);
+    padding: var(--space-md);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.why-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.why-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-sm);
+}
+
+.why-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+    font-weight: 700;
+}
+
+.why-card p {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+}
+
+.why-card strong {
+    color: var(--color-text);
+}
+
+.why-card code {
+    background: rgba(255, 51, 102, 0.1);
+    color: var(--color-primary);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+.trust {
+    padding: var(--space-xl) 0;
+    background: var(--color-surface);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: var(--space-lg);
+}
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-md);
+}
+
+.trust-item {
+    text-align: center;
+    padding: var(--space-md);
+}
+
+.trust-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.trust-item h4 {
+    font-size: 1.3rem;
+    margin-bottom: var(--space-xs);
+    font-weight: 700;
+}
+
+.trust-item p {
+    color: var(--color-text-muted);
+}
+
+.faq {
+    padding: var(--space-xl) 0;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-md);
+}
+
+.faq-item {
+    background: var(--color-surface);
+    padding: var(--space-md);
+    border-radius: 8px;
+    border-left: 4px solid var(--color-primary);
+}
+
+.faq-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-xs);
+    font-weight: 700;
+}
+
+.faq-item p {
+    color: var(--color-text-muted);
+}
+
+.download {
+    padding: var(--space-xl) 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+}
+
+.download-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: var(--space-sm);
+}
+
+.download-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+    margin-bottom: var(--space-lg);
+}
+
+.download-buttons {
+    margin-bottom: var(--space-md);
+}
+
+.download-note {
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.footer {
+    padding: var(--space-lg) 0;
+    background: var(--color-bg);
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+}
+
+.footer-quote {
+    font-size: 1.3rem;
+    font-style: italic;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-muted);
+}
+
+.footer-links {
+    margin-bottom: var(--space-sm);
+}
+
+.footer-links a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--color-primary);
+}
+
+.footer-credit {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 90vh;
+    }
+    .cta-group {
+        flex-direction: column;
+    }
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .why-grid, .trust-grid, .faq-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    They Can't Delete<br>
+                    What You Already Have.
+                </h1>
+                <p class="hero-subtitle">
+                    Download the entire Bible as a static website.<br>
+                    <strong>No internet. No permission. No expiration date.</strong>
+                </p>
+                <div class="cta-group">
+                    <a href="index.html" class="btn btn-primary">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        Read Now - Already Offline
+                    </a>
+                    <a href="#download" class="btn btn-secondary">
+                        Download & Share
+                    </a>
+                </div>
+                <p class="hero-meta">12 MB • Works Offline • Open Source • Zero Tracking</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">66</div>
+                    <div class="stat-label">Books</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1,189</div>
+                    <div class="stat-label">Chapters</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Offline</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Tracking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why">
+        <div class="container">
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="why-icon">🔒</div>
+                    <h3>Digital Preservation is Resistance</h3>
+                    <p>The internet isn't permanent. Access isn't guaranteed. Countries are already restricting Bible access. Apps vanish from stores. Websites go dark. Platforms change their terms. <strong>But a file on your device? That's yours. Forever.</strong></p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon">✈️</div>
+                    <h3>Offline = Unstoppable</h3>
+                    <p>This is the entire Bible as a static website. Double-click <code>index.html</code> and you're reading. No internet connection. No app store approval. No subscription. No login. <strong>It's 2025. Your Bible shouldn't need permission to open.</strong></p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon">🔄</div>
+                    <h3>One Download. Infinite Copies.</h3>
+                    <p>Put it on a USB drive. Email it. Host it yourself. Burn it to a CD. This is for the student in a country where Bibles are banned, the missionary with unreliable internet, the church that wants to host scripture without paying a platform. <strong>Copy it. Share it. It's designed to spread.</strong></p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon">⏳</div>
+                    <h3>Built to Last Decades</h3>
+                    <p>No frameworks that go obsolete. No APIs that shut down. No dependencies that break. Just HTML, CSS, and JavaScript that browsers have supported since the 2000s. <strong>This will open on a laptop in 2045 the same way it opens today.</strong> That's not a promise. That's just how the web works.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust">
+        <div class="container">
+            <h2 class="section-title">Why Trust This?</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <h4>Public Domain Text</h4>
+                    <p>Built with the King James Version - completely public domain. No copyright. No restrictions.</p>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <h4>Open Source</h4>
+                    <p>Verify the code yourself on GitHub. Full transparency. No hidden tracking. No backdoors.</p>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <line x1="1" y1="1" x2="23" y2="23" stroke-width="2"></line>
+                    </svg>
+                    <h4>Zero Surveillance</h4>
+                    <p>No analytics. No data collection. No tracking pixels. We don't even know you downloaded it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Questions?</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h4>Is this legal?</h4>
+                    <p>Yes. Public domain text, open source code. Share it freely.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Does it work offline?</h4>
+                    <p>100%. No internet required after download. That's the entire point.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I share it?</h4>
+                    <p>Please do. Email it. USB it. Host it. That's why it exists.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>What version?</h4>
+                    <p>King James Version (KJV) - Public Domain. More translations coming.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Will this work in 20 years?</h4>
+                    <p>Yes. Pure HTML/CSS/JS. No dependencies. No frameworks. Just the web.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>How do I use it?</h4>
+                    <p>Download. Unzip. Double-click index.html. Start reading. That's it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="download" id="download">
+        <div class="container">
+            <h2 class="download-title">Download the Bible. Keep it Forever.</h2>
+            <p class="download-subtitle">Works on Windows, Mac, Linux, iOS, Android - Any device with a browser</p>
+            <div class="download-buttons">
+                <a href="not-a-bible.zip" class="btn btn-primary btn-large" download>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Complete Bible (12 MB)
+                </a>
+            </div>
+            <p class="download-note">No signup. No tracking. No bullshit. Just scripture.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-quote">"The most radical act in 2025 is owning your own data."</p>
+            <p class="footer-links">
+                <a href="https://github.com/yourusername/not-a-bible">GitHub</a> • 
+                <a href="index.html">Read Now</a> • 
+                <a href="#download">Download</a>
+            </p>
+            <p class="footer-credit">Built with urgency. Shared with love. Preserved for eternity.</p>
+        </div>
+    </footer>
+</body>
+</html>

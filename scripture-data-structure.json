@@ -1,0 +1,165 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "totalBooks": 100,
+    "totalChapters": 1500,
+    "totalVerses": 35000,
+    "categories": ["protestant", "deuterocanonical", "lost", "early-church"],
+    "lastUpdated": "2025-11-22",
+    "description": "Complete scripture data structure including Protestant Canon, Deuterocanonical Books, Lost Books, and Early Church Writings"
+  },
+  
+  "categories": {
+    "protestant": {
+      "name": "Protestant Canon",
+      "description": "66 books accepted by Protestant denominations",
+      "bookCount": 66,
+      "testament": "both",
+      "books": [
+        "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+        "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+        "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
+        "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+        "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations",
+        "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+        "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
+        "Zephaniah", "Haggai", "Zechariah", "Malachi",
+        "Matthew", "Mark", "Luke", "John", "Acts",
+        "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+        "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians",
+        "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews",
+        "James", "1 Peter", "2 Peter", "1 John", "2 John",
+        "3 John", "Jude", "Revelation"
+      ]
+    },
+    
+    "deuterocanonical": {
+      "name": "Deuterocanonical Books",
+      "description": "Books in Catholic/Orthodox Bibles but not Protestant",
+      "bookCount": 15,
+      "testament": "old",
+      "books": [
+        "Tobit", "Judith", "Wisdom", "Sirach", "Baruch",
+        "Letter of Jeremiah", "1 Maccabees", "2 Maccabees",
+        "Additions to Esther", "Prayer of Azariah", "Susanna",
+        "Bel and the Dragon", "1 Esdras", "2 Esdras", "Prayer of Manasseh"
+      ]
+    },
+    
+    "lost": {
+      "name": "Lost & Disputed Books",
+      "description": "Ancient texts excluded from most canons",
+      "bookCount": 20,
+      "testament": "old",
+      "books": [
+        "1 Enoch", "2 Enoch", "3 Enoch", "Jubilees", "Jasher",
+        "Assumption of Moses", "Testament of the Twelve Patriarchs",
+        "Psalms of Solomon", "Odes of Solomon", "3 Maccabees",
+        "4 Maccabees", "Psalm 151", "Letter of Aristeas", "4 Baruch",
+        "Apocalypse of Baruch", "Apocalypse of Abraham", "Apocalypse of Elijah",
+        "Apocalypse of Zephaniah", "Testament of Job", "Testament of Solomon"
+      ]
+    },
+    
+    "earlyChurch": {
+      "name": "Early Church Writings",
+      "description": "First and second century Christian texts",
+      "bookCount": 12,
+      "testament": "new",
+      "books": [
+        "Didache", "1 Clement", "2 Clement", "Epistle of Barnabas",
+        "Shepherd of Hermas", "Ignatius' Letters", "Polycarp to Philippians",
+        "Martyrdom of Polycarp", "Gospel of Thomas", "Gospel of Peter",
+        "Infancy Gospel of James", "Apocalypse of Peter"
+      ]
+    }
+  },
+  
+  "filters": {
+    "protestantOnly": {
+      "description": "Protestant Bible (66 books)",
+      "bookCount": 66,
+      "categories": ["protestant"]
+    },
+    "catholic": {
+      "description": "Catholic Bible (73 books)",
+      "bookCount": 73,
+      "categories": ["protestant", "deuterocanonical"],
+      "excludes": ["1 Esdras", "2 Esdras", "Prayer of Manasseh", "Psalm 151", "3 Maccabees", "4 Maccabees"]
+    },
+    "orthodox": {
+      "description": "Orthodox Bible (78+ books)",
+      "bookCount": 78,
+      "categories": ["protestant", "deuterocanonical"],
+      "includes": ["3 Maccabees", "4 Maccabees", "Psalm 151"]
+    },
+    "ethiopianOrthodox": {
+      "description": "Ethiopian Orthodox Bible (81+ books)",
+      "bookCount": 81,
+      "categories": ["protestant", "deuterocanonical"],
+      "includes": ["1 Enoch", "Jubilees", "1 Meqabyan", "2 Meqabyan", "3 Meqabyan"]
+    },
+    "everything": {
+      "description": "All available scripture texts",
+      "bookCount": 113,
+      "categories": ["protestant", "deuterocanonical", "lost", "early-church"]
+    }
+  },
+  
+  "dataSources": {
+    "protestant": {
+      "source": "King James Version",
+      "url": "https://github.com/thiagobodruk/bible",
+      "license": "Public Domain",
+      "status": "complete"
+    },
+    "deuterocanonical": {
+      "source": "Sacred Texts Archive",
+      "url": "https://www.sacred-texts.com/bib/apo/",
+      "license": "Public Domain",
+      "status": "pending"
+    },
+    "lost": {
+      "source": "Sacred Texts Archive",
+      "url": "https://www.sacred-texts.com/chr/apo/",
+      "license": "Public Domain",
+      "status": "pending"
+    },
+    "earlyChurch": {
+      "source": "Early Christian Writings",
+      "url": "http://www.earlychristianwritings.com/",
+      "license": "Public Domain",
+      "status": "pending"
+    }
+  },
+  
+  "bookStructure": {
+    "example": {
+      "Genesis": {
+        "category": "protestant",
+        "testament": "old",
+        "canonical": ["protestant", "catholic", "orthodox", "jewish"],
+        "chapters": 50,
+        "verses": {
+          "1": ["verse 1 text", "verse 2 text", "..."],
+          "2": ["verse 1 text", "verse 2 text", "..."]
+        },
+        "metadata": {
+          "author": "Moses (traditional)",
+          "dateWritten": "~1400 BC",
+          "context": "First book of Torah...",
+          "whyDisputed": null
+        }
+      }
+    }
+  },
+  
+  "fileSizeEstimates": {
+    "protestant": "4.5 MB",
+    "deuterocanonical": "1.5 MB",
+    "lost": "3.0 MB",
+    "earlyChurch": "1.0 MB",
+    "total": "10.0 MB",
+    "target": "< 15 MB"
+  }
+}

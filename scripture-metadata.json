@@ -1,0 +1,208 @@
+{
+  "protestant": {
+    "Genesis": {
+      "author": "Moses (traditional)",
+      "dateWritten": "~1400 BC",
+      "context": "First book of Torah, covers creation, fall, flood, and patriarchs Abraham, Isaac, Jacob, and Joseph",
+      "whyDisputed": null,
+      "canonical": ["protestant", "catholic", "orthodox", "jewish"],
+      "testament": "old",
+      "chapters": 50
+    },
+    "Exodus": {
+      "author": "Moses (traditional)",
+      "dateWritten": "~1400 BC",
+      "context": "Israelite slavery in Egypt, Moses, ten plagues, exodus, Red Sea crossing, Ten Commandments",
+      "whyDisputed": null,
+      "canonical": ["protestant", "catholic", "orthodox", "jewish"],
+      "testament": "old",
+      "chapters": 40
+    }
+  },
+  "deuterocanonical": {
+    "Tobit": {
+      "author": "Unknown",
+      "dateWritten": "~225-175 BC",
+      "context": "Story of Tobit, his son Tobias, and the angel Raphael. Emphasizes prayer, almsgiving, and proper burial",
+      "whyDisputed": "Not in Hebrew Bible; added to Septuagint. Protestants consider it apocryphal",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 14
+    },
+    "Judith": {
+      "author": "Unknown",
+      "dateWritten": "~150-100 BC",
+      "context": "Story of Jewish widow Judith who saves her people by beheading Assyrian general Holofernes",
+      "whyDisputed": "Historical inaccuracies; not in Hebrew Bible; considered fiction by many scholars",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 16
+    },
+    "Wisdom": {
+      "author": "Unknown (attributed to Solomon)",
+      "dateWritten": "~100-50 BC",
+      "context": "Wisdom literature written in Greek, emphasizes immortality of the soul and divine wisdom",
+      "whyDisputed": "Written in Greek, not Hebrew; not in Jewish canon; Hellenistic influence",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 19
+    },
+    "Sirach": {
+      "author": "Jesus ben Sira",
+      "dateWritten": "~180 BC",
+      "context": "Also called Ecclesiasticus. Wisdom literature covering ethics, relationships, and proper conduct",
+      "whyDisputed": "Not in Hebrew Bible initially; later found in Dead Sea Scrolls fragments",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 51
+    },
+    "Baruch": {
+      "author": "Attributed to Baruch (Jeremiah's scribe)",
+      "dateWritten": "~200-60 BC",
+      "context": "Confession of sins, wisdom poem, and encouragement to exiled Jews",
+      "whyDisputed": "Not in Hebrew Bible; written after Baruch's time; composite work",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 6
+    },
+    "1 Maccabees": {
+      "author": "Unknown",
+      "dateWritten": "~100 BC",
+      "context": "Historical account of Maccabean revolt against Seleucid Empire (167-134 BC)",
+      "whyDisputed": "Historical rather than prophetic; not in Hebrew Bible",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 16
+    },
+    "2 Maccabees": {
+      "author": "Unknown (epitome of Jason of Cyrene)",
+      "dateWritten": "~124 BC",
+      "context": "Parallel account of Maccabean revolt with theological emphasis on resurrection and martyrdom",
+      "whyDisputed": "More theological than historical; contains prayers for the dead",
+      "canonical": ["catholic", "orthodox"],
+      "testament": "old",
+      "chapters": 15
+    }
+  },
+  "lost": {
+    "1 Enoch": {
+      "author": "Multiple authors (pseudepigraphical)",
+      "dateWritten": "~300-100 BC",
+      "context": "Apocalyptic visions attributed to Enoch. Describes fallen angels, heavenly journeys, and end times",
+      "whyDisputed": "Excluded from most canons; quoted in Jude 14-15; canonical in Ethiopian Orthodox Church",
+      "canonical": ["ethiopian-orthodox"],
+      "testament": "old",
+      "chapters": 108
+    },
+    "Jubilees": {
+      "author": "Unknown (pseudepigraphical)",
+      "dateWritten": "~160-150 BC",
+      "context": "Retelling of Genesis and Exodus with additional details, emphasizes calendar and law",
+      "whyDisputed": "Not in any major canon; found in Dead Sea Scrolls; considered authoritative by some ancient Jews",
+      "canonical": ["ethiopian-orthodox"],
+      "testament": "old",
+      "chapters": 50
+    },
+    "Jasher": {
+      "author": "Unknown",
+      "dateWritten": "Disputed (medieval or ancient)",
+      "context": "Mentioned in Joshua 10:13 and 2 Samuel 1:18. Current versions likely medieval compilations",
+      "whyDisputed": "Original lost; current versions are medieval forgeries or reconstructions",
+      "canonical": [],
+      "testament": "old",
+      "chapters": 91
+    },
+    "2 Enoch": {
+      "author": "Unknown (pseudepigraphical)",
+      "dateWritten": "~1st century AD",
+      "context": "Slavonic apocalypse describing Enoch's journey through ten heavens",
+      "whyDisputed": "Survives only in Slavonic; not in any major canon",
+      "canonical": [],
+      "testament": "old",
+      "chapters": 68
+    },
+    "3 Maccabees": {
+      "author": "Unknown",
+      "dateWritten": "~1st century BC",
+      "context": "Story of persecution of Jews in Egypt under Ptolemy IV, not related to Maccabees",
+      "whyDisputed": "Misnomer (not about Maccabees); historical accuracy questioned",
+      "canonical": ["orthodox"],
+      "testament": "old",
+      "chapters": 7
+    },
+    "4 Maccabees": {
+      "author": "Unknown",
+      "dateWritten": "~1st century AD",
+      "context": "Philosophical discourse on reason and martyrdom using Maccabean examples",
+      "whyDisputed": "Philosophical treatise rather than historical narrative",
+      "canonical": ["orthodox-appendix"],
+      "testament": "old",
+      "chapters": 18
+    },
+    "Psalms of Solomon": {
+      "author": "Unknown (attributed to Solomon)",
+      "dateWritten": "~70-40 BC",
+      "context": "18 psalms reflecting on Roman conquest and messianic hope",
+      "whyDisputed": "Not in any major canon; pseudepigraphical",
+      "canonical": [],
+      "testament": "old",
+      "chapters": 18
+    }
+  },
+  "earlyChurch": {
+    "Didache": {
+      "author": "Unknown",
+      "dateWritten": "~50-120 AD",
+      "context": "Teaching of the Twelve Apostles. Early church manual on ethics, baptism, Eucharist, and church order",
+      "whyDisputed": "Not considered inspired scripture; valuable for understanding early church practices",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 16
+    },
+    "1 Clement": {
+      "author": "Clement of Rome",
+      "dateWritten": "~96 AD",
+      "context": "Letter from Roman church to Corinthian church addressing division and rebellion",
+      "whyDisputed": "Early and valuable but not considered inspired; nearly made it into canon",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 65
+    },
+    "Shepherd of Hermas": {
+      "author": "Hermas",
+      "dateWritten": "~100-160 AD",
+      "context": "Apocalyptic visions and moral teachings. Very popular in early church",
+      "whyDisputed": "Too late to be apostolic; allegorical style; nearly made it into canon",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 114
+    },
+    "Epistle of Barnabas": {
+      "author": "Unknown (not Barnabas)",
+      "dateWritten": "~70-132 AD",
+      "context": "Allegorical interpretation of Old Testament and Christian ethics",
+      "whyDisputed": "Not by Barnabas; allegorical method questioned; nearly made it into canon",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 21
+    },
+    "Gospel of Thomas": {
+      "author": "Unknown (attributed to Thomas)",
+      "dateWritten": "~140-200 AD",
+      "context": "Collection of 114 sayings of Jesus. Gnostic influence debated",
+      "whyDisputed": "Gnostic tendencies; late date; not apostolic; contradicts canonical gospels",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 1
+    },
+    "Polycarp to Philippians": {
+      "author": "Polycarp of Smyrna",
+      "dateWritten": "~110-140 AD",
+      "context": "Letter from early church father to Philippian church on faith and conduct",
+      "whyDisputed": "Valuable early witness but not considered inspired scripture",
+      "canonical": [],
+      "testament": "new",
+      "chapters": 14
+    }
+  }
+}

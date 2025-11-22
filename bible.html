@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible - Offline Reader</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap');
+        
+        :root {
+            /* Pure Black & White Brutalism */
+            --color-primary: #000000;
+            --color-secondary: #F5F5F5;
+            --color-white: #FFFFFF;
+            
+            /* Semantic mappings */
+            --bg-primary: #F5F5F5;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #000000;
+            --text-primary: #000000;
+            --text-secondary: #000000;
+            --accent: #000000;
+            --accent-hover: #000000;
+            --border: #000000;
+            --verse-bg: #FFFFFF;
+            --sidebar-width: 280px;
+            
+            /* Brutalist Shadows - Box shadows with offset */
+            --shadow-sm: 2px 2px 0 #000000;
+            --shadow-md: 4px 4px 0 #000000;
+            --shadow-lg: 8px 8px 0 #000000;
+            
+            /* Spacing */
+            --spacing-2: 8px;
+            --spacing-3: 12px;
+            --spacing-4: 16px;
+            --spacing-6: 24px;
+        }
+        
+        [data-theme="dark"] {
+            --color-primary: #FFFFFF;
+            --color-secondary: #1a1a1a;
+            --color-white: #000000;
+            
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #FFFFFF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #FFFFFF;
+            --accent: #FFFFFF;
+            --accent-hover: #FFFFFF;
+            --border: #FFFFFF;
+            --verse-bg: #1a1a1a;
+            
+            --shadow-sm: 2px 2px 0 #FFFFFF;
+            --shadow-md: 4px 4px 0 #FFFFFF;
+            --shadow-lg: 8px 8px 0 #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+        
+        /* Homepage Styles */
+        .homepage {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .homepage::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        [data-theme="dark"] .homepage {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        
+        [data-theme="dark"] .homepage::before {
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.05) 0%, transparent 50%);
+        }
+        
+        .homepage-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .homepage-badge {
+            display: inline-block;
+            padding: var(--spacing-2) var(--spacing-6);
+            background: var(--bg-tertiary);
+            color: var(--bg-primary);
+            border: 2px solid var(--border);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border-radius: 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            animation: fadeInUp 0.8s ease-out 0.1s backwards;
+        }
+        
+        .homepage-title {
+            font-size: clamp(2.5rem, 10vw, 6rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-family: 'IBM Plex Mono', monospace;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+        
+        .homepage-subheader {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            animation: fadeInUp 0.8s ease-out 0.25s backwards;
+        }
+        
+        .homepage-typewriter {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            min-height: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+            display: inline-block;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.25s backwards;
+        }
+        
+        .typewriter-prefix {
+            color: var(--text-primary);
+        }
+        
+        .typewriter-text {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        .typewriter-cursor {
+            color: var(--text-primary);
+            animation: blink 1s infinite;
+            font-weight: 300;
+        }
+        
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        
+        .homepage-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.3s backwards;
+        }
+        
+        .homepage-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-3);
+            padding: var(--spacing-4) var(--spacing-6);
+            background: var(--bg-tertiary);
+            color: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+        
+        .homepage-btn:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: var(--shadow-lg);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .homepage-btn:active {
+            transform: translate(0, 0);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .homepage-meta {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            margin-top: 4rem;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+        
+        .meta-item {
+            text-align: center;
+        }
+        
+        .meta-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .meta-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        
+        .homepage-features {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 4rem auto 6rem;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Unity Section */
+        .unity-section {
+            background: var(--bg-tertiary);
+            color: var(--bg-primary);
+            padding: 4rem 2rem;
+            border-top: 4px solid var(--border);
+            border-bottom: 4px solid var(--border);
+            margin-top: 4rem;
+        }
+        
+        .unity-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .unity-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .unity-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .unity-cta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .unity-stat {
+            text-align: center;
+        }
+        
+        .unity-stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .unity-stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .unity-message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--bg-primary);
+        }
+        
+        .homepage-footer {
+            position: relative;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .homepage-footer p {
+            margin-bottom: 0.25rem;
+        }
+        
+        .homepage-footer-small {
+            font-size: 0.8rem;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Reader App Styles */
+        .reader-app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            backdrop-filter: none;
+            box-shadow: none;
+        }
+        
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: var(--spacing-3) var(--spacing-4);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--bg-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: var(--accent);
+            color: var(--text-primary);
+            border-color: var(--border);
+            box-shadow: var(--shadow-md);
+            transform: translate(-2px, -2px);
+        }
+        
+        .btn:active {
+            transform: translate(0, 0);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            min-width: 40px;
+        }
+        
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 65px);
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 2px solid var(--border);
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: none;
+        }
+        
+        .sidebar-section {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .canon-filter {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            padding: var(--spacing-4);
+            margin-bottom: var(--spacing-4);
+        }
+        
+        .canon-select {
+            width: 100%;
+            padding: var(--spacing-3);
+            border: 2px solid var(--border);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        .canon-select:focus {
+            outline: none;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .book-list {
+            list-style: none;
+        }
+        
+        .book-item {
+            padding: 0.6rem 0.75rem;
+            cursor: pointer;
+            border-radius: 0;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+        
+        .book-item:hover {
+            background: var(--bg-primary);
+            border-color: var(--border);
+        }
+        
+        .book-item.active {
+            background: var(--bg-tertiary);
+            color: var(--bg-primary);
+            font-weight: 700;
+            border-color: var(--border);
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .content-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Timeline Navigation */
+        .chapter-timeline-container {
+            margin-top: 2rem;
+            position: relative;
+            padding: 1rem 0;
+        }
+        
+        .chapter-timeline {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 1.5rem 0.5rem;
+            scroll-behavior: smooth;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .chapter-timeline::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .chapter-timeline::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+        
+        .chapter-timeline::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        
+        .chapter-timeline::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+        
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            transform: translateY(-50%);
+            z-index: 0;
+            border-radius: 0;
+        }
+        
+        .chapter-node {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chapter-node:hover {
+            transform: translateY(-4px);
+        }
+        
+        .chapter-dot {
+            width: 48px;
+            height: 48px;
+            border-radius: 0;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            box-shadow: none;
+        }
+        
+        .chapter-node:hover .chapter-dot {
+            box-shadow: var(--shadow-md);
+            transform: translate(-2px, -2px);
+        }
+        
+        .chapter-node.active .chapter-dot {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-md);
+            transform: translate(-2px, -2px);
+        }
+        
+        .chapter-node.completed .chapter-dot {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+            color: var(--bg-primary);
+        }
+        
+        .chapter-node.completed .chapter-dot::after {
+            content: '✓';
+            position: absolute;
+            font-size: 0.7rem;
+        }
+        
+        .chapter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        
+        .chapter-node.active .chapter-label {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        .chapter-node:hover .chapter-label {
+            color: var(--text-primary);
+        }
+        
+        /* Timeline Controls */
+        .timeline-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-info {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .timeline-nav-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .timeline-nav-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        
+        .timeline-nav-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .timeline-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .timeline-nav-btn:disabled:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+        
+        .verses {
+            max-width: 800px;
+        }
+        
+        .verse {
+            margin-bottom: 1.25rem;
+            padding: 1rem 1.25rem;
+            background: var(--verse-bg);
+            border-radius: 0;
+            border: 2px solid var(--border);
+            line-height: 1.9;
+            box-shadow: none;
+            transition: all 0.2s;
+        }
+        
+        .verse:hover {
+            box-shadow: var(--shadow-md);
+            transform: translate(-2px, -2px);
+        }
+        
+        .verse-number {
+            display: inline-block;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-right: 0.75rem;
+            min-width: 35px;
+            font-size: 0.95em;
+        }
+        
+        .verse-text {
+            display: inline;
+        }
+        
+        .welcome {
+            max-width: 600px;
+            text-align: center;
+            margin: 4rem auto;
+            padding: 3rem;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .welcome h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .search-results {
+            max-width: 800px;
+        }
+        
+        .search-result {
+            padding: 1.25rem;
+            background: var(--verse-bg);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .search-result:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(2px);
+        }
+        
+        .search-result-ref {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .search-result-text {
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+        
+        .search-result-text mark {
+            background: var(--accent);
+            color: white;
+            padding: 0.15em 0.4em;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .font-controls {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .homepage-title {
+                font-size: 2.5rem;
+            }
+            
+            .homepage-meta {
+                flex-wrap: wrap;
+                gap: 1.5rem;
+            }
+            
+            .meta-item {
+                flex: 1 1 40%;
+            }
+            
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .homepage-features {
+                margin-top: 2rem;
+            }
+            
+            .homepage-footer {
+                position: relative;
+                margin-top: 3rem;
+                bottom: auto;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 65px;
+                height: calc(100vh - 65px);
+                z-index: 90;
+                transition: left 0.3s;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .search-bar {
+                max-width: none;
+                flex: 1;
+            }
+            
+            .header {
+                padding: 0.75rem 1rem;
+            }
+            
+            .header-title {
+                display: none;
+            }
+            
+            .font-controls {
+                display: none;
+            }
+            
+            .content-title {
+                font-size: 1.8rem;
+            }
+            
+            .chapter-timeline {
+                gap: 0.5rem;
+                padding: 1rem 0.5rem;
+            }
+            
+            .chapter-dot {
+                width: 40px;
+                height: 40px;
+                font-size: 0.85rem;
+            }
+            
+            .chapter-label {
+                font-size: 0.7rem;
+            }
+            
+            .timeline-controls {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+            }
+            
+            .timeline-nav-btns {
+                width: 100%;
+            }
+            
+            .timeline-nav-btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Homepage / Book Cover -->
+    <div class="homepage" id="homepage">
+        <div class="homepage-content">
+            <div class="homepage-badge">DIGITAL PRESERVATION</div>
+            <h1 class="homepage-title">
+                They Can't Delete<br>
+                What You<br>
+                Already Have
+            </h1>
+            <div class="homepage-typewriter">
+                <span class="typewriter-prefix">Before they </span>
+                <span class="typewriter-text" id="typewriterText"></span>
+                <span class="typewriter-cursor">|</span>
+            </div>
+            <p class="homepage-subtitle">
+                Countries are banning scripture. Platforms are removing content.<br>
+                Apps require permission. Websites go offline.<br>
+                <strong>Download it now. Keep it forever.</strong>
+            </p>
+            <button class="homepage-btn" id="enterBtn">
+                <span>Open & Read</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+            <div class="homepage-meta">
+                <div class="meta-item">
+                    <div class="meta-value">66</div>
+                    <div class="meta-label">Books</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">1,189</div>
+                    <div class="meta-label">Chapters</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">100%</div>
+                    <div class="meta-label">Offline</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">0</div>
+                    <div class="meta-label">Tracking</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="homepage-features">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3>Every Canon</h3>
+                    <p>Protestant (66). Catholic (+7). Orthodox (+more). Lost books. All included.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Unity Over Division</h3>
+                    <p>Stop fighting over which books are "real". Read them all. Follow Christ.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✈️</div>
+                    <h3>100% Offline</h3>
+                    <p>Works with WiFi off. No internet. No permission. Uncensorable forever.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔓</div>
+                    <h3>No Gatekeeping</h3>
+                    <p>No denomination controls this. No authority decides for you. Just scripture.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Unity Section -->
+        <div class="unity-section">
+            <div class="unity-content">
+                <h2 class="unity-title">STOP FIGHTING OVER VERSIONS</h2>
+                <p class="unity-text">
+                    Christianity is divided over semantics. Protestants reject books as "satanic." 
+                    Catholics include 7 more. Orthodox include even more. Everyone fights over which version is "real."
+                </p>
+                <p class="unity-text">
+                    <strong>This is absurd.</strong>
+                </p>
+                <p class="unity-text">
+                    The early Church read ALL these texts. The 1611 KJV included the Apocrypha. 
+                    These books were scripture for centuries.
+                </p>
+                <div class="unity-cta">
+                    <div class="unity-stat">
+                        <div class="unity-stat-number">66</div>
+                        <div class="unity-stat-label">Protestant Canon</div>
+                    </div>
+                    <div class="unity-stat">
+                        <div class="unity-stat-number">+7</div>
+                        <div class="unity-stat-label">Catholic Additions</div>
+                    </div>
+                    <div class="unity-stat">
+                        <div class="unity-stat-number">+15</div>
+                        <div class="unity-stat-label">Lost Books</div>
+                    </div>
+                    <div class="unity-stat">
+                        <div class="unity-stat-number">=</div>
+                        <div class="unity-stat-label">Everything</div>
+                    </div>
+                </div>
+                <p class="unity-message">
+                    We're not saying what's canonical. We're saying: <strong>Read everything. Decide yourself.</strong><br>
+                    Unity over division. Christ over denominations.
+                </p>
+            </div>
+        </div>
+        
+        <div class="homepage-footer">
+            <p>This file works anywhere. Forever. No exceptions.</p>
+            <p class="homepage-footer-small">Built with urgency. Shared with love. Preserved for eternity.</p>
+        </div>
+    </div>
+    
+    <!-- Main Reader (hidden initially) -->
+    <div class="reader-app" id="readerApp" style="display: none;">
+        <header class="header">
+            <button class="btn btn-icon" id="homeBtn" title="Back to home">←</button>
+            <h1 class="header-title">Bible</h1>
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search verses...">
+            </div>
+            <div class="header-controls">
+                <div class="font-controls">
+                    <button class="btn btn-icon" id="fontDecrease" title="Decrease font size">A-</button>
+                    <button class="btn btn-icon" id="fontIncrease" title="Increase font size">A+</button>
+                </div>
+                <button class="btn btn-icon" id="themeToggle" title="Toggle theme">🌙</button>
+            </div>
+        </header>
+        
+        <div class="container">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-section canon-filter">
+                    <h3 class="sidebar-title">VIEW</h3>
+                    <select class="canon-select" id="canonFilter">
+                        <option value="protestant">Protestant Canon (66)</option>
+                        <option value="catholic">+ Catholic (73)</option>
+                        <option value="orthodox">+ Orthodox (78)</option>
+                        <option value="all">Everything (All)</option>
+                    </select>
+                </div>
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Old Testament</h3>
+                    <ul class="book-list" id="oldTestamentBooks"></ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">New Testament</h3>
+                    <ul class="book-list" id="newTestamentBooks"></ul>
+                </div>
+                <div class="sidebar-section" id="apocryphaSection" style="display: none;">
+                    <h3 class="sidebar-title">Deuterocanonical</h3>
+                    <ul class="book-list" id="apocryphaBooks"></ul>
+                </div>
+                <div class="sidebar-section" id="lostBooksSection" style="display: none;">
+                    <h3 class="sidebar-title">Lost & Disputed</h3>
+                    <ul class="book-list" id="lostBooks"></ul>
+                </div>
+            </aside>
+            
+            <main class="main-content" id="mainContent">
+                <div class="welcome">
+                    <h2>Select a Book</h2>
+                    <p>Choose from the sidebar to begin reading.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // BIBLE DATA - This will be populated with the full KJV text
+        // For now, including Genesis 1 as a demo
+        const BIBLE_DATA = {
+            "Genesis": {
+                "chapters": 50,
+                "verses": {
+                    "1": [
+                        "In the beginning God created the heaven and the earth.",
+                        "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
+                        "And God said, Let there be light: and there was light.",
+                        "And God saw the light, that it was good: and God divided the light from the darkness.",
+                        "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.",
+                        "And God said, Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.",
+                        "And God made the firmament, and divided the waters which were under the firmament from the waters which were above the firmament: and it was so.",
+                        "And God called the firmament Heaven. And the evening and the morning were the second day.",
+                        "And God said, Let the waters under the heaven be gathered together unto one place, and let the dry land appear: and it was so.",
+                        "And God called the dry land Earth; and the gathering together of the waters called he Seas: and God saw that it was good.",
+                        "And God said, Let the earth bring forth grass, the herb yielding seed, and the fruit tree yielding fruit after his kind, whose seed is in itself, upon the earth: and it was so.",
+                        "And the earth brought forth grass, and herb yielding seed after his kind, and the tree yielding fruit, whose seed was in itself, after his kind: and God saw that it was good.",
+                        "And the evening and the morning were the third day.",
+                        "And God said, Let there be lights in the firmament of the heaven to divide the day from the night; and let them be for signs, and for seasons, and for days, and years:",
+                        "And let them be for lights in the firmament of the heaven to give light upon the earth: and it was so.",
+                        "And God made two great lights; the greater light to rule the day, and the lesser light to rule the night: he made the stars also.",
+                        "And God set them in the firmament of the heaven to give light upon the earth,",
+                        "And to rule over the day and over the night, and to divide the light from the darkness: and God saw that it was good.",
+                        "And the evening and the morning were the fourth day.",
+                        "And God said, Let the waters bring forth abundantly the moving creature that hath life, and fowl that may fly above the earth in the open firmament of heaven.",
+                        "And God created great whales, and every living creature that moveth, which the waters brought forth abundantly, after their kind, and every winged fowl after his kind: and God saw that it was good.",
+                        "And God blessed them, saying, Be fruitful, and multiply, and fill the waters in the seas, and let fowl multiply in the earth.",
+                        "And the evening and the morning were the fifth day.",
+                        "And God said, Let the earth bring forth the living creature after his kind, cattle, and creeping thing, and beast of the earth after his kind: and it was so.",
+                        "And God made the beast of the earth after his kind, and cattle after their kind, and every thing that creepeth upon the earth after his kind: and God saw that it was good.",
+                        "And God said, Let us make man in our image, after our likeness: and let them have dominion over the fish of the sea, and over the fowl of the air, and over the cattle, and over all the earth, and over every creeping thing that creepeth upon the earth.",
+                        "So God created man in his own image, in the image of God created he him; male and female created he them.",
+                        "And God blessed them, and God said unto them, Be fruitful, and multiply, and replenish the earth, and subdue it: and have dominion over the fish of the sea, and over the fowl of the air, and over every living thing that moveth upon the earth.",
+                        "And God said, Behold, I have given you every herb bearing seed, which is upon the face of all the earth, and every tree, in the which is the fruit of a tree yielding seed; to you it shall be for meat.",
+                        "And to every beast of the earth, and to every fowl of the air, and to every thing that creepeth upon the earth, wherein there is life, I have given every green herb for meat: and it was so.",
+                        "And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day."
+                    ]
+                }
+            }
+        };
+        
+        // Book metadata
+        const OLD_TESTAMENT = [
+            'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy',
+            'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel',
+            '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles',
+            'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms',
+            'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah',
+            'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel',
+            'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah',
+            'Micah', 'Nahum', 'Habakkuk', 'Zephaniah',
+            'Haggai', 'Zechariah', 'Malachi'
+        ];
+        
+        const NEW_TESTAMENT = [
+            'Matthew', 'Mark', 'Luke', 'John', 'Acts',
+            'Romans', '1 Corinthians', '2 Corinthians', 'Galatians',
+            'Ephesians', 'Philippians', 'Colossians',
+            '1 Thessalonians', '2 Thessalonians', '1 Timothy',
+            '2 Timothy', 'Titus', 'Philemon', 'Hebrews',
+            'James', '1 Peter', '2 Peter', '1 John',
+            '2 John', '3 John', 'Jude', 'Revelation'
+        ];
+        
+        // State
+        let currentBook = null;
+        let currentChapter = null;
+        let fontSize = 16;
+        let theme = 'light';
+        
+        // Initialize
+        function init() {
+            renderBookLists();
+            setupEventListeners();
+            loadSettings();
+            
+            // Check if user has visited before
+            const hasVisited = localStorage.getItem('hasVisited');
+            if (hasVisited) {
+                // Skip homepage, go straight to reader
+                enterReader();
+                loadBookmark();
+            }
+        }
+        
+        // Enter the reader from homepage
+        function enterReader() {
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('readerApp').style.display = 'flex';
+            localStorage.setItem('hasVisited', 'true');
+        }
+        
+        // Go back to homepage
+        function goHome() {
+            document.getElementById('homepage').style.display = 'flex';
+            document.getElementById('readerApp').style.display = 'none';
+        }
+        
+        // Render book lists
+        function renderBookLists() {
+            const oldTestamentEl = document.getElementById('oldTestamentBooks');
+            const newTestamentEl = document.getElementById('newTestamentBooks');
+            
+            OLD_TESTAMENT.forEach(book => {
+                const li = document.createElement('li');
+                li.className = 'book-item';
+                li.textContent = book;
+                li.onclick = () => selectBook(book);
+                oldTestamentEl.appendChild(li);
+            });
+            
+            NEW_TESTAMENT.forEach(book => {
+                const li = document.createElement('li');
+                li.className = 'book-item';
+                li.textContent = book;
+                li.onclick = () => selectBook(book);
+                newTestamentEl.appendChild(li);
+            });
+        }
+        
+        // Select book
+        function selectBook(book) {
+            if (!BIBLE_DATA[book]) {
+                alert(`${book} data not yet loaded. Currently only Genesis 1 is available in this demo.`);
+                return;
+            }
+            
+            currentBook = book;
+            currentChapter = 1;
+            
+            // Update active state
+            document.querySelectorAll('.book-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === book) {
+                    item.classList.add('active');
+                }
+            });
+            
+            renderChapterNav();
+            saveBookmark();
+        }
+        
+        // Render chapter navigation with timeline
+        function renderChapterNav() {
+            const bookData = BIBLE_DATA[currentBook];
+            const mainContent = document.getElementById('mainContent');
+            const totalChapters = bookData.chapters;
+            const progress = (currentChapter / totalChapters) * 100;
+            
+            let html = '<div class="content-header">';
+            html += `<h2 class="content-title">${currentBook}</h2>`;
+            
+            // Timeline controls
+            html += '<div class="timeline-controls">';
+            html += `<div class="timeline-info">Chapter ${currentChapter} of ${totalChapters}</div>`;
+            html += '<div class="timeline-nav-btns">';
+            html += `<button class="timeline-nav-btn" onclick="previousChapter()" ${currentChapter === 1 ? 'disabled' : ''}>← Previous</button>`;
+            html += `<button class="timeline-nav-btn" onclick="nextChapter()" ${currentChapter === totalChapters ? 'disabled' : ''}>Next →</button>`;
+            html += '</div></div>';
+            
+            // Timeline
+            html += '<div class="chapter-timeline-container">';
+            html += `<div class="timeline-line" style="--progress: ${progress}%"></div>`;
+            html += '<div class="chapter-timeline" id="chapterTimeline">';
+            
+            for (let i = 1; i <= totalChapters; i++) {
+                const active = i === currentChapter ? 'active' : '';
+                const completed = i < currentChapter ? 'completed' : '';
+                html += `
+                    <div class="chapter-node ${active} ${completed}" onclick="selectChapter(${i})">
+                        <div class="chapter-dot">${i}</div>
+                        <div class="chapter-label">Ch ${i}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div></div></div>';
+            html += '<div id="chapterContent"></div>';
+            
+            mainContent.innerHTML = html;
+            renderChapter();
+            scrollTimelineToActive();
+        }
+        
+        // Scroll timeline to show active chapter
+        function scrollTimelineToActive() {
+            setTimeout(() => {
+                const timeline = document.getElementById('chapterTimeline');
+                const activeNode = timeline?.querySelector('.chapter-node.active');
+                if (activeNode && timeline) {
+                    const timelineRect = timeline.getBoundingClientRect();
+                    const nodeRect = activeNode.getBoundingClientRect();
+                    const scrollLeft = activeNode.offsetLeft - (timelineRect.width / 2) + (nodeRect.width / 2);
+                    timeline.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                }
+            }, 100);
+        }
+        
+        // Navigate to previous chapter
+        function previousChapter() {
+            if (currentChapter > 1) {
+                selectChapter(currentChapter - 1);
+            }
+        }
+        
+        // Navigate to next chapter
+        function nextChapter() {
+            const bookData = BIBLE_DATA[currentBook];
+            if (currentChapter < bookData.chapters) {
+                selectChapter(currentChapter + 1);
+            }
+        }
+        
+        // Select chapter
+        function selectChapter(chapter) {
+            currentChapter = chapter;
+            renderChapterNav();
+            saveBookmark();
+        }
+        
+        // Render chapter
+        function renderChapter() {
+            const verses = BIBLE_DATA[currentBook].verses[currentChapter];
+            const chapterContent = document.getElementById('chapterContent');
+            
+            if (!verses || verses.length === 0) {
+                chapterContent.innerHTML = `
+                    <div class="welcome">
+                        <h3>${currentBook} ${currentChapter}</h3>
+                        <p>This chapter's content is not yet loaded in this demo.</p>
+                        <p>To add the full Bible data, see instructions in the README.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="verses">';
+            verses.forEach((verse, index) => {
+                html += `
+                    <div class="verse">
+                        <span class="verse-number">${index + 1}</span>
+                        <span class="verse-text">${verse}</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            chapterContent.innerHTML = html;
+        }
+        
+        // Search functionality
+        function handleSearch(query) {
+            if (query.length < 3) {
+                if (currentBook) {
+                    renderChapterNav();
+                } else {
+                    showWelcome();
+                }
+                return;
+            }
+            
+            const results = [];
+            const searchLower = query.toLowerCase();
+            
+            Object.keys(BIBLE_DATA).forEach(book => {
+                const bookData = BIBLE_DATA[book];
+                Object.keys(bookData.verses).forEach(chapter => {
+                    bookData.verses[chapter].forEach((verse, index) => {
+                        if (verse.toLowerCase().includes(searchLower)) {
+                            results.push({
+                                book,
+                                chapter,
+                                verse: index + 1,
+                                text: verse
+                            });
+                        }
+                    });
+                });
+            });
+            
+            renderSearchResults(results, query);
+        }
+        
+        // Render search results
+        function renderSearchResults(results, query) {
+            const mainContent = document.getElementById('mainContent');
+            
+            if (results.length === 0) {
+                mainContent.innerHTML = `
+                    <div class="welcome">
+                        <h2>No results found</h2>
+                        <p>Try a different search term.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="content-header">';
+            html += `<h2 class="content-title">Search Results</h2>`;
+            html += `<p>${results.length} verse${results.length !== 1 ? 's' : ''} found</p>`;
+            html += '</div>';
+            html += '<div class="search-results">';
+            
+            results.forEach(result => {
+                const highlightedText = result.text.replace(
+                    new RegExp(query, 'gi'),
+                    match => `<mark>${match}</mark>`
+                );
+                
+                html += `
+                    <div class="search-result">
+                        <div class="search-result-ref">${result.book} ${result.chapter}:${result.verse}</div>
+                        <div class="search-result-text">${highlightedText}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            mainContent.innerHTML = html;
+        }
+        
+        // Show welcome screen
+        function showWelcome() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="welcome">
+                    <h2>Welcome to the Bible</h2>
+                    <p>Select a book from the sidebar to begin reading.</p>
+                    <p>This reader works 100% offline with zero external dependencies.</p>
+                    <p><strong>Features:</strong> Search, bookmarks, theme toggle, adjustable font size</p>
+                </div>
+            `;
+        }
+        
+        // Theme toggle
+        function toggleTheme() {
+            theme = theme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeToggle').textContent = theme === 'light' ? '🌙' : '☀️';
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Font size controls
+        function changeFontSize(delta) {
+            fontSize = Math.max(12, Math.min(24, fontSize + delta));
+            document.documentElement.style.fontSize = fontSize + 'px';
+            localStorage.setItem('fontSize', fontSize);
+        }
+        
+        // Save bookmark
+        function saveBookmark() {
+            if (currentBook && currentChapter) {
+                localStorage.setItem('bookmark', JSON.stringify({
+                    book: currentBook,
+                    chapter: currentChapter
+                }));
+            }
+        }
+        
+        // Load bookmark
+        function loadBookmark() {
+            const bookmark = localStorage.getItem('bookmark');
+            if (bookmark) {
+                const { book, chapter } = JSON.parse(bookmark);
+                if (BIBLE_DATA[book]) {
+                    currentBook = book;
+                    currentChapter = chapter;
+                    selectBook(book);
+                }
+            }
+        }
+        
+        // Load settings
+        function loadSettings() {
+            // Load theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                theme = savedTheme;
+                document.documentElement.setAttribute('data-theme', theme);
+                document.getElementById('themeToggle').textContent = theme === 'light' ? '🌙' : '☀️';
+            }
+            
+            // Load font size
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                fontSize = parseInt(savedFontSize);
+                document.documentElement.style.fontSize = fontSize + 'px';
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Homepage enter button
+            document.getElementById('enterBtn').addEventListener('click', enterReader);
+            
+            // Home button in header
+            document.getElementById('homeBtn').addEventListener('click', goHome);
+            
+            // Search
+            let searchTimeout;
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    handleSearch(e.target.value);
+                }, 300);
+            });
+            
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // Font size controls
+            document.getElementById('fontIncrease').addEventListener('click', () => changeFontSize(1));
+            document.getElementById('fontDecrease').addEventListener('click', () => changeFontSize(-1));
+        }
+        
+        // Make functions global for onclick handlers
+        window.selectBook = selectBook;
+        window.selectChapter = selectChapter;
+        window.previousChapter = previousChapter;
+        window.nextChapter = nextChapter;
+        
+        // Typewriter effect for homepage
+        class Typewriter {
+            constructor(element, words, options = {}) {
+                this.element = element;
+                this.words = words;
+                this.speed = options.speed || 80;
+                this.deleteSpeed = options.deleteSpeed || 50;
+                this.waitTime = options.waitTime || 2000;
+                this.loop = options.loop !== false;
+                
+                this.currentWordIndex = 0;
+                this.currentText = '';
+                this.isDeleting = false;
+                this.charIndex = 0;
+                
+                this.type();
+            }
+            
+            type() {
+                const currentWord = this.words[this.currentWordIndex];
+                
+                if (this.isDeleting) {
+                    // Deleting
+                    this.currentText = currentWord.substring(0, this.charIndex - 1);
+                    this.charIndex--;
+                    
+                    if (this.charIndex === 0) {
+                        this.isDeleting = false;
+                        this.currentWordIndex = (this.currentWordIndex + 1) % this.words.length;
+                        
+                        if (!this.loop && this.currentWordIndex === 0) {
+                            return; // Stop if not looping
+                        }
+                        
+                        setTimeout(() => this.type(), 500);
+                        return;
+                    }
+                } else {
+                    // Typing
+                    this.currentText = currentWord.substring(0, this.charIndex + 1);
+                    this.charIndex++;
+                    
+                    if (this.charIndex > currentWord.length) {
+                        this.isDeleting = true;
+                        setTimeout(() => this.type(), this.waitTime);
+                        return;
+                    }
+                }
+                
+                this.element.textContent = this.currentText;
+                
+                const speed = this.isDeleting ? this.deleteSpeed : this.speed;
+                setTimeout(() => this.type(), speed);
+            }
+        }
+        
+        // Initialize typewriter on homepage
+        function initTypewriter() {
+            const typewriterElement = document.getElementById('typewriterText');
+            if (typewriterElement) {
+                const words = [
+                    'ban it',
+                    'censor it',
+                    'restrict it',
+                    'remove it',
+                    'control it',
+                    'block it',
+                    'delete it',
+                    'take it away'
+                ];
+                
+                new Typewriter(typewriterElement, words, {
+                    speed: 80,
+                    deleteSpeed: 50,
+                    waitTime: 2000,
+                    loop: true
+                });
+            }
+        }
+        
+        // Canon filter functionality
+        function handleCanonFilter(value) {
+            const apocryphaSection = document.getElementById('apocryphaSection');
+            const lostBooksSection = document.getElementById('lostBooksSection');
+            
+            // Hide all extra sections by default
+            apocryphaSection.style.display = 'none';
+            lostBooksSection.style.display = 'none';
+            
+            // Show sections based on selection
+            if (value === 'catholic' || value === 'orthodox' || value === 'all') {
+                apocryphaSection.style.display = 'block';
+            }
+            
+            if (value === 'all') {
+                lostBooksSection.style.display = 'block';
+            }
+            
+            // Save preference
+            localStorage.setItem('canonFilter', value);
+        }
+        
+        // Setup canon filter listener
+        function setupCanonFilter() {
+            const canonFilter = document.getElementById('canonFilter');
+            if (canonFilter) {
+                canonFilter.addEventListener('change', (e) => {
+                    handleCanonFilter(e.target.value);
+                });
+                
+                // Load saved preference
+                const saved = localStorage.getItem('canonFilter');
+                if (saved) {
+                    canonFilter.value = saved;
+                    handleCanonFilter(saved);
+                }
+            }
+        }
+        
+        // Populate placeholder books for future sections
+        function populatePlaceholderBooks() {
+            const apocryphaBooks = document.getElementById('apocryphaBooks');
+            const lostBooks = document.getElementById('lostBooks');
+            
+            if (apocryphaBooks) {
+                const apocrypha = ['Tobit', 'Judith', 'Wisdom', 'Sirach', 'Baruch', '1 Maccabees', '2 Maccabees'];
+                apocrypha.forEach(book => {
+                    const li = document.createElement('li');
+                    li.className = 'book-item book-placeholder';
+                    li.textContent = book;
+                    li.title = 'Coming soon';
+                    li.style.opacity = '0.5';
+                    li.style.cursor = 'not-allowed';
+                    apocryphaBooks.appendChild(li);
+                });
+            }
+            
+            if (lostBooks) {
+                const lost = ['1 Enoch', 'Jubilees', 'Jasher', 'Gospel of Thomas', 'Shepherd of Hermas'];
+                lost.forEach(book => {
+                    const li = document.createElement('li');
+                    li.className = 'book-item book-placeholder';
+                    li.textContent = book;
+                    li.title = 'Coming soon';
+                    li.style.opacity = '0.5';
+                    li.style.cursor = 'not-allowed';
+                    lostBooks.appendChild(li);
+                });
+            }
+        }
+        
+        // Initialize on load
+        init();
+        initTypewriter();
+        setupCanonFilter();
+        populatePlaceholderBooks();
+    </script>
+</body>
+</html>
