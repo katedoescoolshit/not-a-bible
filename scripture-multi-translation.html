@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Scripture Library - 19 Translations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 { font-size: 2rem; margin-bottom: 10px; }
+        
+        .translation-selector {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .translation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .translation-card {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .translation-card:hover {
+            border-color: #000;
+            transform: translateY(-2px);
+        }
+        
+        .translation-card.active {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+        
+        .translation-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .translation-meta {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .book-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+        
+        .book-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .book-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .reader {
+            display: none;
+            background: #fff;
+            border: 2px solid #000;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .reader.active {
+            display: block;
+        }
+        
+        .chapter-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .chapter-btn {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+        
+        .chapter-btn.active {
+            background: #000;
+            color: #fff;
+        }
+        
+        .verse {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .verse-number {
+            font-weight: 700;
+            margin-right: 8px;
+            color: #666;
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+        }
+        
+        .stats {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📖 Complete Scripture Library</h1>
+            <p>19 Translations • 11 Languages • 66 Books • 582,269 Verses</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTranslations">19</div>
+                    <div class="stat-label">Translations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalLanguages">11</div>
+                    <div class="stat-label">Languages</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">66</div>
+                    <div class="stat-label">Books</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">582K</div>
+                    <div class="stat-label">Total Verses</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Translation Selector -->
+        <div class="translation-selector">
+            <h2>Select Translation</h2>
+            <div class="translation-grid" id="translationGrid"></div>
+        </div>
+
+        <!-- Book Grid -->
+        <div id="bookSection" style="display: none;">
+            <h2 id="currentTranslationName"></h2>
+            <div class="book-grid" id="bookGrid"></div>
+        </div>
+
+        <!-- Reader -->
+        <div class="reader" id="reader">
+            <button class="back-btn" onclick="closeReader()">← Back to Books</button>
+            <h2 id="readerTitle"></h2>
+            <div class="chapter-nav" id="chapterNav"></div>
+            <div id="chapterContent"></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading" style="display: none;">
+            Loading translation...
+        </div>
+    </div>
+
+    <script>
+        // State
+        let translations = [];
+        let currentTranslation = null;
+        let currentTranslationData = null;
+        let currentBook = null;
+        let currentChapter = 1;
+        const loadedTranslations = {};
+
+        // Initialize
+        async function init() {
+            await loadTranslationIndex();
+            renderTranslationGrid();
+        }
+
+        // Load translation index
+        async function loadTranslationIndex() {
+            try {
+                const response = await fetch('scripture-data/translations-index.json');
+                const data = await response.json();
+                translations = data.translations;
+                document.getElementById('totalTranslations').textContent = data.totalTranslations;
+                document.getElementById('totalLanguages').textContent = data.languages.length;
+            } catch (error) {
+                console.error('Error loading translation index:', error);
+                alert('Error loading translations. Make sure scripture-data folder is accessible.');
+            }
+        }
+
+        // Render translation grid
+        function renderTranslationGrid() {
+            const grid = document.getElementById('translationGrid');
+            grid.innerHTML = '';
+
+            translations.forEach(trans => {
+                const card = document.createElement('div');
+                card.className = 'translation-card';
+                card.onclick = () => selectTranslation(trans.code);
+                
+                card.innerHTML = `
+                    <div class="translation-name">${trans.name}</div>
+                    <div class="translation-meta">
+                        ${trans.language} • ${trans.abbrev}<br>
+                        ${trans.bookCount} books
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Select translation
+        async function selectTranslation(code) {
+            currentTranslation = code;
+            
+            // Update active state
+            document.querySelectorAll('.translation-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.translation-card').classList.add('active');
+
+            // Load translation data
+            if (!loadedTranslations[code]) {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('bookSection').style.display = 'none';
+                
+                try {
+                    const response = await fetch(`scripture-data/translations/${code}.json`);
+                    const data = await response.json();
+                    loadedTranslations[code] = data;
+                    currentTranslationData = data;
+                } catch (error) {
+                    console.error('Error loading translation:', error);
+                    alert('Error loading translation data');
+                    document.getElementById('loading').style.display = 'none';
+                    return;
+                }
+                
+                document.getElementById('loading').style.display = 'none';
+            } else {
+                currentTranslationData = loadedTranslations[code];
+            }
+
+            // Show books
+            const trans = translations.find(t => t.code === code);
+            document.getElementById('currentTranslationName').textContent = trans.name;
+            document.getElementById('bookSection').style.display = 'block';
+            renderBooks();
+        }
+
+        // Render books
+        function renderBooks() {
+            const grid = document.getElementById('bookGrid');
+            grid.innerHTML = '';
+
+            Object.entries(currentTranslationData.books).forEach(([name, book]) => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.onclick = () => openBook(name);
+                
+                card.innerHTML = `
+                    <div class="book-title">${name}</div>
+                    <div class="book-meta">
+                        ${book.chapters} chapters
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            // Scroll to books
+            document.getElementById('bookSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Open book
+        function openBook(bookName) {
+            currentBook = bookName;
+            currentChapter = 1;
+            
+            const book = currentTranslationData.books[bookName];
+            if (!book) return;
+
+            // Hide grid, show reader
+            document.getElementById('bookSection').style.display = 'none';
+            document.getElementById('reader').classList.add('active');
+
+            // Set title
+            const trans = translations.find(t => t.code === currentTranslation);
+            document.getElementById('readerTitle').textContent = `${bookName} (${trans.abbrev})`;
+
+            // Render chapter navigation
+            renderChapterNav(book.chapters);
+
+            // Render first chapter
+            renderChapter();
+        }
+
+        // Close reader
+        function closeReader() {
+            document.getElementById('bookSection').style.display = 'block';
+            document.getElementById('reader').classList.remove('active');
+            currentBook = null;
+        }
+
+        // Render chapter navigation
+        function renderChapterNav(totalChapters) {
+            const nav = document.getElementById('chapterNav');
+            nav.innerHTML = '';
+
+            for (let i = 1; i <= totalChapters; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'chapter-btn' + (i === currentChapter ? ' active' : '');
+                btn.textContent = i;
+                btn.onclick = () => {
+                    currentChapter = i;
+                    renderChapter();
+                };
+                nav.appendChild(btn);
+            }
+        }
+
+        // Render chapter
+        function renderChapter() {
+            const book = currentTranslationData.books[currentBook];
+            if (!book || !book.verses) return;
+
+            const verses = book.verses[currentChapter];
+            if (!verses) return;
+
+            const content = document.getElementById('chapterContent');
+            content.innerHTML = '';
+
+            verses.forEach((text, index) => {
+                const verse = document.createElement('div');
+                verse.className = 'verse';
+                verse.innerHTML = `<span class="verse-number">${index + 1}</span>${text}`;
+                content.appendChild(verse);
+            });
+
+            // Update active chapter button
+            document.querySelectorAll('.chapter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.chapter-btn')[currentChapter - 1]?.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
